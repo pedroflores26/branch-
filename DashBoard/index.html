@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard da Empresa - PeçaAq</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <img src="img/LogoPecaAq4.png" alt="Logo PeçaAq">
+      <h2>PEÇAAQ</h2>
+    </div>
+
+    <nav>
+      <a href="#" class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+      <a href="#"><i class="fa-regular fa-user"></i> Perfil</a>
+      <a href="#"><i class="fa-solid fa-plus"></i> Adicionar</a>
+    </nav>
+
+    <div class="sidebar-footer">
+
+<button id="btnSidebarSair"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+    </div>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+
+    <header>
+      <h1>DASHBOARD</h1>
+
+      <div class="header-right">
+
+        <span class="empresa-nome" id="headerEmpresaNome">Carregando...</span>
+        <i class="fa-regular fa-circle-user"></i>
+      </div>
+    </header>
+
+    <!-- SEÇÃO: DASHBOARD -->
+    <section id="sec-dashboard">
+      <div class="cards">
+        <div class="card">
+          <h3>Total de Produtos</h3>
+          <p class="valor" id="cardTotalProdutos">0</p>
+        </div>
+
+        <div class="card">
+          <h3>Total de Anúncios</h3>
+          <p class="valor" id="cardTotalAnuncios">0</p>
+        </div>
+
+
+        <div class="card">
+          <h3>Produtos em estoque</h3>
+          <p class="valor" id="totalProdutos">0</p>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- Tabela -->
+        <div class="tabela-produtos">
+          <h3>Produtos</h3>
+          <input type="text" id="search" placeholder="🔍 Pesquise...">
+
+          <table>
+            <thead>
+              <tr>
+                <th>Imagem</th>
+                <th>Nome</th>
+                <th>Preço</th>
+              </tr>
+            </thead>
+            <tbody id="lista-produtos">
+              <!-- Renderiza via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Gráfico -->
+        <div class="grafico">
+          <h3>Dados de Vendas</h3>
+          <canvas id="graficoVendas"></canvas>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SEÇÃO: PERFIL -->
+    <section id="sec-perfil" style="display:none;" class="perfil">
+
+      <div class="perfil-card">
+
+        <div class="perfil-header perfil-linha">
+
+          <div class="perfil-left">
+            <img src="img/empresa.png" class="perfil-foto">
+          </div>
+
+          <div class="perfil-right">
+            <h2 id="perfilNomeEmpresa">Carregando...</h2>
+            <p id="perfilCNPJ">CNPJ: ---</p>
+
+            <div class="perfil-tags">
+              <span id="perfilCategoria">Categoria...</span>
+              <span id="perfilEndereco">Endereço...</span>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="perfil-info-clean">
+
+          <h3>Informações da Empresa</h3>
+
+          <div class="linha-info">
+            <span class="label">Email</span>
+            <p id="perfilEmail" class="valor-info">---</p>
+          </div>
+
+          <div class="linha-info">
+            <span class="label">Telefone</span>
+            <p id="perfilTelefone" class="valor-info">---</p>
+          </div>
+
+          <div class="linha-info">
+            <span class="label">Endereço</span>
+            <p id="perfilEndereco" class="valor-info">---</p>
+          </div>
+
+          <div class="linha-info">
+            <span class="label">Categoria</span>
+            <p id="perfilCategoria" class="valor-info">---</p>
+          </div>
+
+        </div>
+
+
+        <div class="perfil-actions">
+          <button class="btn-editar">Editar Perfil</button>
+          <button class="btn-sair" id="btnSair">Sair da Empresa</button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SEÇÃO: ADICIONAR PRODUTO -->
+    <section id="sec-adicionar" style="display:none;">
+      <h3>Adicionar Produto</h3>
+
+      <form id="formProduto" enctype="multipart/form-data">
+
+        <label>Nome do Produto:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label>SKU Universal:</label>
+        <input type="text" id="sku" name="sku">
+
+        <label>Marca:</label>
+        <input type="text" id="marca" name="marca">
+
+        <label>Descrição Técnica:</label>
+        <textarea id="descricao" name="descricao" rows="4"></textarea>
+
+        <label>Preço (R$):</label>
+        <input type="text" id="preco" name="preco" required>
+
+        <label>Foto do Produto:</label>
+        <input type="file" id="foto" name="foto" accept="image/*" required>
+
+        <div id="fotoPreview"
+          style="margin-top:10px; width:200px; height:150px; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center;">
+          <span>+</span>
+        </div>
+
+        <button type="submit">Cadastrar Produto</button>
+      </form>
+
+    </section>
+
+  </main>
+
+  <!-- ✅ SCRIPT COMPLETO DO DASHBOARD -->
+   <script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* ============================
+          TROCAR ENTRE AS SEÇÕES (Sidebar)
+    ============================= */
+    const links = document.querySelectorAll(".sidebar nav a");
+    const secDashboard = document.getElementById("sec-dashboard");
+    const secPerfil = document.getElementById("sec-perfil");
+    const secAdicionar = document.getElementById("sec-adicionar");
+
+    links.forEach((link, index) => {
+        link.addEventListener("click", event => {
+            event.preventDefault();
+
+            secDashboard.style.display = "none";
+            secPerfil.style.display = "none";
+            secAdicionar.style.display = "none";
+
+            links.forEach(l => l.classList.remove("active"));
+            link.classList.add("active");
+
+            if (index === 0) secDashboard.style.display = "block";
+            if (index === 1) secPerfil.style.display = "block";
+            if (index === 2) secAdicionar.style.display = "block";
+        });
+    });
+
+    /* ============================
+              LISTAR PRODUTOS
+    ============================= */
+    async function listarProdutos() {
+        try {
+            const resp = await fetch("listarProdutos.php");
+            const json = await resp.json();
+
+            if (json.status !== "ok") {
+                console.error("Erro ao listar produtos:", json.mensagem || "Resposta inválida do servidor.");
+                return;
+            }
+
+            const lista = document.getElementById("lista-produtos");
+            lista.innerHTML = "";
+
+            json.produtos.forEach(produto => {
+                lista.innerHTML += `
+                    <tr>
+                        <td><img src="${produto.foto_principal}" width="60" style="border-radius:6px; object-fit: cover;"></td>
+                        <td>${produto.nome}</td>
+                        <td>R$ ${parseFloat(produto.preco).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("totalProdutos").textContent = json.produtos.length;
+
+        } catch (erro) {
+            console.error("Erro ao carregar produtos:", erro);
+        }
+    }
+
+    /* ============================
+              CADASTRAR PRODUTO
+    ============================= */
+    const form = document.getElementById("formProduto");
+    const fotoPreview = document.getElementById("fotoPreview");
+
+    if (form) {
+        form.addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                // ✅ Corrigido: o arquivo está no mesmo diretório
+                const resp = await fetch("processaProduto.php", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const json = await resp.json();
+
+                if (json.status === "ok") {
+                    alert("Produto cadastrado com sucesso!");
+                    form.reset();
+                    if (fotoPreview) fotoPreview.innerHTML = "<span>+</span>";
+                    listarProdutos();
+                } else {
+                    alert("Erro ao cadastrar: " + (json.mensagem_erro || "Verifique o arquivo processaProduto.php"));
+                }
+
+            } catch (erro) {
+                console.error("Erro ao cadastrar produto:", erro);
+                alert("Erro de conexão ao cadastrar produto.");
+            }
+        });
+    }
+
+    /* ============================
+                PREVIEW FOTO
+    ============================= */
+    const inputFoto = document.getElementById("foto");
+
+    if (inputFoto && fotoPreview) {
+        inputFoto.addEventListener("change", e => {
+            const file = e.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    fotoPreview.innerHTML =
+                        `<img src="${ev.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fotoPreview.innerHTML = "<span>+</span>";
+            }
+        });
+    }
+
+    /* ============================
+              FILTRO DE PESQUISA
+    ============================= */
+    const search = document.getElementById("search");
+
+    if (search) {
+        search.addEventListener("input", event => {
+            const termo = event.target.value.toLowerCase();
+
+            document.querySelectorAll("#lista-produtos tr").forEach(tr => {
+                const nome = tr.children[1].textContent.toLowerCase();
+                tr.style.display = nome.includes(termo) ? "" : "none";
+            });
+        });
+    }
+
+    /* ============================
+              GRÁFICO VENDAS
+    ============================= */
+    const graficoVendas = document.getElementById("graficoVendas");
+
+    if (graficoVendas) {
+        new Chart(graficoVendas, {
+            type: "bar",
+            data: {
+                labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+                datasets: [
+                    { label: "Vendas", data: [300, 400, 350, 500, 480, 600, 580, 540, 570, 610, 620, 630], backgroundColor: "limegreen" },
+                    { label: "Itens", data: [200, 250, 240, 300, 280, 350, 340, 320, 330, 360, 370, 380], backgroundColor: "red" }
+                ]
+            },
+            options: { responsive: true, scales: { y: { beginAtZero: true } } }
+        });
+    }
+
+    /* ============================
+              PERFIL DINÂMICO
+    ============================= */
+    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+    if (usuario) {
+        const setText = (id, text) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        };
+
+        setText("headerEmpresaNome", usuario.nome_empresa);
+        setText("perfilNomeEmpresa", usuario.nome_empresa);
+        setText("perfilCNPJ", "CNPJ: " + (usuario.cnpj || "---"));
+        setText("perfilEmail", usuario.email || "---");
+        setText("perfilTelefone", usuario.telefone || "---");
+        
+        document.querySelectorAll('#perfilEndereco').forEach(el => el.textContent = usuario.endereco || 'Endereço...');
+        document.querySelectorAll('#perfilCategoria').forEach(el => el.textContent = usuario.categoria || 'Categoria...');
+    }
+
+    /* ============================
+                  SAIR (Logout)
+    ============================= */
+   /* ============================
+          SAIR (Logout)
+============================ */
+const URL_LOGIN = "../Login/indexLogin.html";
+
+async function sair() {
+    try {
+        // Faz logout no servidor
+        const resp = await fetch("../Login/logout.php", { method: "POST" });
+        const data = await resp.json();
+
+        if (data.status === "ok") {
+            // Remove dados locais e redireciona
+            localStorage.removeItem("usuarioLogado");
+            window.location.href = URL_LOGIN;
+        } else {
+            alert("Erro ao encerrar sessão. Tente novamente.");
+        }
+    } catch (erro) {
+        console.error("Erro ao sair:", erro);
+        alert("Falha de conexão ao tentar sair.");
+    }
+}
+
+const btnSair = document.getElementById("btnSair");
+const btnSidebarSair = document.getElementById("btnSidebarSair");
+
+if (btnSair) btnSair.addEventListener("click", sair);
+if (btnSidebarSair) btnSidebarSair.addEventListener("click", sair);
+
+    /* ============================
+              DASHBOARD (Cards)
+    ============================= */
+    async function carregarDashboard() {
+        try {
+            const resp = await fetch("dadosDashboard.php");
+            const json = await resp.json();
+
+            if (json.status === "ok") {
+                document.getElementById("cardTotalProdutos").textContent = json.produtos;
+                document.getElementById("cardTotalAnuncios").textContent = json.anuncios;
+            }
+
+        } catch (erro) {
+            console.error("Erro ao carregar dadosDashboard.php:", erro);
+        }
+    }
+
+    /* ============================
+              INICIAR PÁGINA
+    ============================= */
+    listarProdutos();
+    carregarDashboard();
+
+});
+</script>
+
+<script src="script.js"></script>
+</body>
+
+</html>
